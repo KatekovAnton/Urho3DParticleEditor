@@ -14,8 +14,6 @@
 
 #include <memory.h>
 
-#include "Sys.h"
-
 
 
 static bool _logPacks = true;

@@ -1,13 +1,5 @@
-//
-//  USimpleContainer.h
-//  TerminalExtraction
-//
-//  Created by Katekov Anton on 10/16/12.
-//
-//
-
-#ifndef __TerminalExtraction__USimpleContainer__
-#define __TerminalExtraction__USimpleContainer__
+#ifndef USimpleContainer_h
+#define USimpleContainer_h
 
 #include <vector>
 #include <cstring>
@@ -189,4 +181,4 @@ namespace Utils {
     }
 }
 
-#endif /* defined(__TerminalExtraction__USimpleContainer__) */
+#endif

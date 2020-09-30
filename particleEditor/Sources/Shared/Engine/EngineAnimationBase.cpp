@@ -1,7 +1,7 @@
 #include "EngineAnimationBase.h"
 #include "EngineAnimationDelegate.h"
 #include <math.h>
-#ifdef PROJECTN_TARGET_OS_WIN
+#ifdef PROJECT_TARGET_OS_WIN
 #include <corecrt_math_defines.h>
 #endif
 

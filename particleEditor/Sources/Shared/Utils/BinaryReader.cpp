@@ -1,13 +1,4 @@
-//
-//  BinaryReader.cpp
-//  TerminalExtraction
-//
-//  Created by Mister Pattern on 11/19/12.
-//
-//
-
 #include "BinaryReader.h"
-#include <Shared/Utils/Sys.h>
 #include <memory>
 #include <cstring>
 

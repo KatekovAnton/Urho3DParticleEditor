@@ -1,11 +1,3 @@
-//
-//  BinaryPack.hpp
-//  MAX
-//
-//  Created by Katekov Anton on 3/18/16.
-//  Copyright © 2016 AntonKatekov. All rights reserved.
-//
-
 #ifndef BinaryPack_hpp
 #define BinaryPack_hpp
 

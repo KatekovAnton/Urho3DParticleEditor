@@ -138,7 +138,7 @@ void Game::Start()
 void Game::runBulletHitWall(const Vector3 &position, const Vector3 &normal)
 {
     ResourceCache* cache = scene_->GetSubsystem<ResourceCache>();
-    
+//    cache->AddResourceDir("my/folder");
     Quaternion r = Quaternion(Vector3(0, 0, -1), normal);
 //    {
 //        Node* emitter = scene_->CreateChild();

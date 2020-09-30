@@ -88,7 +88,7 @@ using namespace Urho3D;
 
 
 // дефайн дебаггер - вызывает точку останова (можно юзать как ассерт, который не убивает все)
-#if !defined(NDEBUG) & (defined(PROJECTN_TARGET_OS_LINUX) | defined(PROJECTN_TARGET_OS_MAC))
+#if !defined(NDEBUG) & (defined(PROJECT_TARGET_OS_LINUX) | defined(PROJECT_TARGET_OS_MAC))
     #include <csignal>
     #define DEBUGGER(a, ...) { if (a) { URHO3D_LOGERRORF(__VA_ARGS__); std::raise(SIGINT); } }
 #else

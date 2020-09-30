@@ -5,7 +5,7 @@
 #include <Defines.h>
 
 #ifndef NDEBUG
-#ifdef PROJECTN_TARGET_OS_LINUX
+#ifdef PROJECT_TARGET_OS_LINUX
 #define GAME_USES_CURRENT_DIR_PATH
 #endif
 #endif

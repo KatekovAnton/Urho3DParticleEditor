@@ -10,7 +10,6 @@
 #include <memory>
 #include <string>
 #include <cstring>
-#include "Sys.h"
 #include "ByteBuffer.h"
 
 
@@ -23,9 +22,6 @@ BinaryWriter::BinaryWriter(const std::string &filename)
 ,_file(NULL)
 {
     _file = fopen(_filename.c_str(), "r+b");
-    if (!_file) {
-        ULog("attempt to write into not existing file!");
-    }
 }
 
 BinaryWriter::~ BinaryWriter()

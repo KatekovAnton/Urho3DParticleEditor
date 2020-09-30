@@ -1,13 +1,5 @@
-//
-//  IdGenerator.h
-//  TerminalExtraction
-//
-//  Created by Katekov Anton on 11/1/12.
-//
-//
-
-#ifndef __TerminalExtraction__IdGenerator__
-#define __TerminalExtraction__IdGenerator__
+#ifndef IdGenerator_h
+#define IdGenerator_h
 
 #include <iostream>
 
@@ -25,4 +17,4 @@ public:
     
 };
 
-#endif /* defined(__TerminalExtraction__IdGenerator__) */
+#endif

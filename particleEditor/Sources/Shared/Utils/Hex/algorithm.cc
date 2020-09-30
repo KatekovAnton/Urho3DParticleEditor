@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <cassert>
 #include <sstream>
-#ifdef PROJECTN_TARGET_OS_WIN
+#ifdef PROJECT_TARGET_OS_WIN
 #include <iterator>
 #endif
 

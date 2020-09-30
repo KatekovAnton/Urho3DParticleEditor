@@ -1,19 +1,11 @@
-//
-//  MathKit.h
-//  TerminalExtraction
-//
-//  Created by Katekov Anton on 10/30/12.
-//
-//
+#ifndef MathKit_h
+#define MathKit_h
 
-#ifndef TerminalExtraction_MathKit_h
-#define TerminalExtraction_MathKit_h
-
-#if defined PROJECTN_TARGET_OS_MAC || defined PROJECTN_TARGET_OS_IPHONE || defined PROJECTN_TARGET_OS_WIN
+#if defined PROJECT_TARGET_OS_MAC || defined PROJECT_TARGET_OS_IPHONE || defined PROJECT_TARGET_OS_WIN
 typedef unsigned int uint;
 #endif
 #include "math.h"
-#if defined PROJECTN_TARGET_OS_WIN
+#if defined PROJECT_TARGET_OS_WIN
 #define __inline__ inline
 #endif
 

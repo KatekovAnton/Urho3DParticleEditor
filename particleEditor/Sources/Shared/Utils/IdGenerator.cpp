@@ -1,11 +1,3 @@
-//
-//  IdGenerator.cpp
-//  TerminalExtraction
-//
-//  Created by Katekov Anton on 11/1/12.
-//
-//
-
 #include "IdGenerator.h"
 
 

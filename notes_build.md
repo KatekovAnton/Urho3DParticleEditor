@@ -23,10 +23,6 @@ set (INDIRECT_DEPS_EXE_LINKER_FLAGS "${INDIRECT_DEPS_EXE_LINKER_FLAGS} -Wl")
 ```
 
 
-Commit:
-git@github.com:KatekovAnton/Urho3D.git
-ac8060c36b2abfb2a62aa25033a0d791a17eb1c8 [ac8060c36]
-
 
 ## Win
 ### Build urho
@@ -63,10 +59,4 @@ fixing clang compiler error in bullet:
 fixing xcode generator
 UrhoCommon.cmake: line 123 - I commented it out.
 ```
-
-
-## AO
-https://bitbucket.org/reattiva/sao-as/src/default/
-https://discourse.urho3d.io/t/alchemy-ambient-occlusion/662/21
-https://developer.nvidia.com/gpugems/gpugems3/part-iii-rendering/chapter-16-vegetation-procedural-animation-and-shading-crysis
 

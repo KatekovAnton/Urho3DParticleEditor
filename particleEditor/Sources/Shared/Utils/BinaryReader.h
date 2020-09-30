@@ -1,11 +1,3 @@
-//
-//  BinaryReader.h
-//  TerminalExtraction
-//
-//  Created by Mister Pattern on 11/19/12.
-//
-//
-
 #ifndef BinaryReader__
 #define BinaryReader__
 

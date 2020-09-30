@@ -28,7 +28,7 @@
 #include <cerrno>
 #include <cassert>
 #include <cstdlib>
-#ifdef PROJECTN_TARGET_OS_WIN
+#ifdef PROJECT_TARGET_OS_WIN
 #include <iterator>
 #endif
 namespace hex {
