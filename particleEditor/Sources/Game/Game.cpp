@@ -53,7 +53,7 @@
 #include <Urho3D/Graphics/ParticleEmitter.h>
 
 #include <Shared/Loader/LoaderScene.h>
-
+#include <Game/EditorController.h>
 
 // Expands to this example's entry-point
 URHO3D_DEFINE_APPLICATION_MAIN(Game)
@@ -80,38 +80,7 @@ Game::~Game()
 
 void Game::initGraphicsMode()
 {
-#ifndef NDEBUG
-    // debug = settings in debug::SettingsWindow::load(engineParameters_)
-#else
-//    Graphics *g = GetSubsystem<Graphics>();
-//    g->SetMode(g->GetWidth(), g->GetHeight(), g->GetFullscreen(), g->GetBorderless(), g->GetResizable(), g->GetHighDPI(), true, false, false, g->GetMonitor(), Min(g->GetRefreshRate(), 50));
-#endif
-    
-    
-    
-//    {
-//        Graphics *g = GetSubsystem<Graphics>();
-//
-//        {
-//            float a, b, c;
-//            SDL_GetDisplayDPI(0, &a, &b, &c);
-//
-//            // check to see if we should scale based on windowsize : drawable size ratio
-//            // only relevant for OSX Retina displays?
-//            SDL_Window* curwindow = g->GetWindow();
-//
-//            int gl_w, gl_h;
-//            SDL_GL_GetDrawableSize(curwindow, &gl_w, &gl_h);
-//
-//            int sdl_w, sdl_h;
-//            SDL_GetWindowSize(curwindow, &sdl_w, &sdl_h);
-//
-//            assert(sdl_w != 0);
-//            float multiplier = (float)gl_w / (float)sdl_w;
-//
-//            GUI::options->retinaFactor = multiplier; 
-//        }
-//    }
+
 }
 
 void Game::Start()
@@ -131,76 +100,8 @@ void Game::Start()
     // Set the mouse mode to use in the sample
     BaseApplication::InitMouseMode(MM_FREE);
 
-}
-
-
-
-void Game::runBulletHitWall(const Vector3 &position, const Vector3 &normal)
-{
-    ResourceCache* cache = scene_->GetSubsystem<ResourceCache>();
-//    cache->AddResourceDir("my/folder");
-    Quaternion r = Quaternion(Vector3(0, 0, -1), normal);
-//    {
-//        Node* emitter = scene_->CreateChild();
-//        emitter->SetWorldPosition(position);
-//        emitter->SetWorldRotation(r);
-//        auto* particleEmitter = emitter->CreateComponent<ParticleEmitter>();
-//        particleEmitter->SetEffect(cache->GetResource<ParticleEffect>("Default/particleLaserExplosionSmokeFast.xml"));
-//
-//        particleEmitter->SetEmitting(true);
-//        emitter->SetTemporary(true);
-//    }
-    {
-        Node* emitter = scene_->CreateChild();
-        emitter->SetWorldPosition(position);
-        emitter->SetWorldRotation(r);
-        auto* particleEmitter = emitter->CreateComponent<ParticleEmitter>();
-        particleEmitter->SetEffect(cache->GetResource<ParticleEffect>("Default/particleLaserExplosionSmokeSlow.xml"));
-
-        particleEmitter->SetEmitting(true);
-        emitter->SetTemporary(true);
-    }
-    {
-        Node* emitter = scene_->CreateChild();
-        emitter->SetWorldPosition(position);
-        emitter->SetWorldRotation(r);
-        auto* particleEmitter = emitter->CreateComponent<ParticleEmitter>();
-        particleEmitter->SetEffect(cache->GetResource<ParticleEffect>("Default/particleBurst.xml"));
-
-        particleEmitter->SetEmitting(true);
-        emitter->SetTemporary(true);
-    }
-
-    {
-        Node* emitter = scene_->CreateChild();
-        emitter->SetWorldPosition(position);
-        emitter->SetWorldRotation(r);
-        auto* particleEmitter = emitter->CreateComponent<ParticleEmitter>();
-        particleEmitter->SetEffect(cache->GetResource<ParticleEffect>("Default/particleLaserExplosionSparks.xml"));
-
-        particleEmitter->SetEmitting(true);
-        emitter->SetTemporary(true);
-    }
-    {
-        Node* emitter = scene_->CreateChild();
-        emitter->SetWorldPosition(position);
-        emitter->SetWorldRotation(r);
-        auto* particleEmitter = emitter->CreateComponent<ParticleEmitter>();
-        particleEmitter->SetEffect(cache->GetResource<ParticleEffect>("Default/particleBurstSmal.xml"));
-
-        particleEmitter->SetEmitting(true);
-        emitter->SetTemporary(true);
-    }
-    {
-        Node* emitter = scene_->CreateChild();
-        emitter->SetWorldPosition(position);
-        emitter->SetWorldRotation(r);
-        auto* particleEmitter = emitter->CreateComponent<ParticleEmitter>();
-        particleEmitter->SetEffect(cache->GetResource<ParticleEffect>("Default/particleLaserExplosionFlare.xml"));
-
-        particleEmitter->SetEmitting(true);
-        emitter->SetTemporary(true);
-    }
+    
+    _editor = new EditorController(scene_, _cameraNode);
 }
 
 void Game::SubscribeToEvents()
@@ -237,9 +138,6 @@ void Game::CreateMap()
         
     }
     
-    // _gameController->_ui->_onClicked = [this] (const UIUserClickResult &clickResult) {
-    //     this->runSomething(clickResult);
-    // };
     
     {
         _cameraNode = scene_->CreateChild();
@@ -302,22 +200,15 @@ void Game::CreateMap()
         shape->SetStaticPlane();
     }
     
-    _cameraNode->SetPosition(Vector3(120.0f, 9, 115));
-    _cameraNode->LookAt(Vector3(95.0f, 2.0f, 115.0f));
-    _yaw = _cameraNode->GetRotation().YawAngle();
-    _pitch = _cameraNode->GetRotation().PitchAngle();
+    
     
 }
 
 void Game::HandleUpdate(StringHash eventType, VariantMap& eventData)
 {
     using namespace Update;
-
-    // Take the frame time step, which is stored as a float
     float timeStep = eventData[P_TIMESTEP].GetFloat();
-
-    // Move the camera, scale movement with time step
-    MoveCamera(timeStep);
+    _editor->handleUpdate(timeStep);
 }
 
 
@@ -342,80 +233,3 @@ void Game::HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData)
         }
     }
 }
-
-void Game::MoveCamera(float timeStep)
-{
-    // Right mouse button controls mouse cursor visibility: hide when pressed
-    auto* ui = GetSubsystem<UI>();
-    auto* input = GetSubsystem<Input>();
-
-    // Do not move if the UI has a focused element
-    if (ui->GetFocusElement())
-        return;
-
-    // Movement speed as world units per second
-    const float MOVE_SPEED = 10.0f;
-    // Mouse sensitivity as degrees per pixel
-    const float MOUSE_SENSITIVITY = 0.1f;
-
-    // Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp the pitch between -90 and 90 degrees
-    // Only move the camera when the cursor is hidden
-    if (input->GetMouseButtonDown(MOUSEB_RIGHT))
-    {
-        IntVector2 mouseMove = input->GetMouseMove();
-        _yaw += MOUSE_SENSITIVITY * mouseMove.x_;
-        _pitch += MOUSE_SENSITIVITY * mouseMove.y_;
-        _pitch = Clamp(_pitch, -90.0f, 90.0f);
-
-        // Construct new orientation for the camera scene node from yaw and pitch. Roll is fixed to zero
-        _cameraNode->SetRotation(Quaternion(_pitch, _yaw, 0.0f));
-    }
-
-    // Read WASD keys and move the camera scene node to the corresponding direction if they are pressed
-    if (input->GetKeyDown(KEY_W))
-        _cameraNode->Translate(Vector3::FORWARD * MOVE_SPEED * timeStep);
-    if (input->GetKeyDown(KEY_S))
-        _cameraNode->Translate(Vector3::BACK * MOVE_SPEED * timeStep);
-    if (input->GetKeyDown(KEY_A))
-        _cameraNode->Translate(Vector3::LEFT * MOVE_SPEED * timeStep);
-    if (input->GetKeyDown(KEY_D))
-        _cameraNode->Translate(Vector3::RIGHT * MOVE_SPEED * timeStep);
-    
-//    if (!input->GetKeyDown(KEY_R)) 
-//    {
-//        if (rDown_) {
-//            rDown_ = false;
-//            SwitchRoofs();
-//        }
-//    }
-//    else {
-//        rDown_ = true;
-//    }
-//    
-//    if (!input->GetKeyDown(KEY_T)) 
-//    {
-//        if (tDown_) {
-//            tDown_ = false;
-//            parameterSource_->Set("Locked", !parameterSource_->Get("Locked"));
-//            
-//            UpdateTextLocked();
-//        }
-//    }
-//    else {
-//        tDown_ = true;
-//    }
-//    
-//    if (!input->GetKeyDown(KEY_Y)) 
-//    {
-//        if (yDown_) {
-//            yDown_ = false;
-//            parameterSource_->Set("Opened", !parameterSource_->Get("Opened"));
-//            
-//            UpdateTextOpened();
-//        }
-//    }
-//    else {
-//        yDown_ = true;
-//    }
-}
-

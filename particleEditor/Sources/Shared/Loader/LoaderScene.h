@@ -5,14 +5,9 @@
 
 
 
-class GameController;
-class GameSceneData;
-class ConfigScene;
-class LoaderDestinationInterface;
 namespace Urho3D {
 class SceneResolver;
 }
-
 
 
 

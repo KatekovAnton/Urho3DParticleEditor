@@ -56,19 +56,6 @@ namespace Urho3D
 }
 
 
-// классы проекта
-class UrhoEditor;
-class Keyboard;
-class GUI;
-
-struct Atlas;
-struct Frame;
-
-class GUIText;
-class GUIElement;
-class GUIGeometryBuilder; 
- 
-
 using namespace Urho3D;
 
 #include <memory>

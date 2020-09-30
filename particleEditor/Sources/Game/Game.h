@@ -24,13 +24,19 @@ using namespace Urho3D;
 
 
 
+class EditorController;
+
+
+
 class Game : public BaseApplication
 {
     URHO3D_OBJECT(Game, BaseApplication);
     
+    EditorController *_editor;
+
     Node *_cameraNode = nullptr;
-    float _yaw;
-    float _pitch;
+//    float _yaw;
+//    float _pitch;
     bool _touchEnabled;
     
 public:
@@ -44,21 +50,12 @@ public:
 private:
     
     void CreateMap();
-//    /// Construct a new Text instance, containing the 'Hello World' String, and add it to the UI root element.
-//    void CreateText();
-    /// Subscribe to application-wide logic update events.
     void SubscribeToEvents();
-    /// Handle the logic update event.
     
     void HandleUpdate(StringHash eventType, VariantMap& eventData);
     void HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData);
     
-    
     void initGraphicsMode();
-
-    void runBulletHitWall(const Vector3 &position, const Vector3 &normal);
-    
-    void MoveCamera(float timeStep);
 
 };
 
