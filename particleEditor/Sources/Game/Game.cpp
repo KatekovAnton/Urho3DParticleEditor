@@ -33,6 +33,7 @@
 #include <Urho3D/Graphics/Terrain.h>
 #include <Urho3D/Graphics/TextureCube.h>
 #include <Urho3D/Graphics/Zone.h>
+#include <Urho3D/Graphics/Texture2D.h>
 #include <Urho3D/Graphics/StateMachineRunner.h>
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/Input/Input.h>
@@ -51,6 +52,17 @@
 #include <Urho3D/Engine/DebugHud.h>
 #include <Urho3D/Graphics/ParticleEffect.h>
 #include <Urho3D/Graphics/ParticleEmitter.h>
+
+// UI headers
+#include <Urho3D/UI/Button.h>
+#include <Urho3D/UI/CheckBox.h>
+#include <Urho3D/UI/LineEdit.h>
+#include <Urho3D/UI/Text.h>
+#include <Urho3D/UI/ToolTip.h>
+#include <Urho3D/UI/UI.h>
+#include <Urho3D/UI/UIEvents.h>
+#include <Urho3D/UI/Window.h>
+
 
 #include <Shared/Loader/LoaderScene.h>
 #include <Game/EditorController.h>
@@ -90,16 +102,14 @@ void Game::Start()
     // Execute base class startup
     BaseApplication::Start();
     
+    CreateGui();
+    
     CreateMap();
     
     // Finally subscribe to the update event. Note that by subscribing events at this point we have already missed some events
     // like the ScreenMode event sent by the Graphics subsystem when opening the application window. To catch those as well we
     // could subscribe in the constructor instead.
     SubscribeToEvents();
-    
-    // Set the mouse mode to use in the sample
-    BaseApplication::InitMouseMode(MM_FREE);
-
     
     _editor = new EditorController(scene_, _cameraNode);
 }
@@ -110,6 +120,31 @@ void Game::SubscribeToEvents()
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Game, HandleUpdate));
     
     SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(Game, HandlePostRenderUpdate));
+}
+
+void Game::CreateGui()
+{
+    GetSubsystem<Input>()->SetMouseVisible(true);
+
+    // Load XML file containing default UI style sheet
+    auto* cache = GetSubsystem<ResourceCache>();
+    auto* style = cache->GetResource<XMLFile>("_System/DefaultStyle.xml");
+
+    uiRoot_ = GetSubsystem<UI>()->GetRoot();
+    // Set the loaded style as default style
+    uiRoot_->SetDefaultStyle(style);
+
+    // Initialize Window
+    InitWindow();
+
+    // Create and add some controls to the Window
+    InitControls();
+
+    // Create a draggable Fish
+    CreateDraggableFish();
+
+    // Set the mouse mode to use in the sample
+    InitMouseMode(MM_FREE);
 }
 
 void Game::CreateMap()
@@ -199,9 +234,6 @@ void Game::CreateMap()
         CollisionShape* shape = objectNode->CreateComponent<CollisionShape>();
         shape->SetStaticPlane();
     }
-    
-    
-    
 }
 
 void Game::HandleUpdate(StringHash eventType, VariantMap& eventData)
@@ -233,3 +265,159 @@ void Game::HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData)
         }
     }
 }
+
+
+
+
+void Game::InitControls()
+{
+    // Create a CheckBox
+    auto* checkBox = new CheckBox(context_);
+    checkBox->SetName("CheckBox");
+
+    // Create a Button
+    auto* button = new Button(context_);
+    button->SetName("Button");
+    button->SetMinHeight(24);
+
+    // Create a LineEdit
+    auto* lineEdit = new LineEdit(context_);
+    lineEdit->SetName("LineEdit");
+    lineEdit->SetMinHeight(24);
+
+    // Add controls to Window
+    window_->AddChild(checkBox);
+    window_->AddChild(button);
+    window_->AddChild(lineEdit);
+
+    // Apply previously set default style
+    checkBox->SetStyleAuto();
+    checkBox->SetSize(30, 30);
+    button->SetStyleAuto();
+    lineEdit->SetStyleAuto();
+}
+
+void Game::InitWindow()
+{
+    // Create the Window and add it to the UI's root node
+    window_ = new Window(context_);
+    uiRoot_->AddChild(window_);
+
+    // Set Window size and layout settings
+    window_->SetMinWidth(384);
+    window_->SetLayout(LM_VERTICAL, 10, IntRect(10, 10, 10, 10));
+    window_->SetAlignment(HA_CUSTOM, VA_CUSTOM);
+    
+    window_->SetName("Window");
+
+    // Create Window 'titlebar' container
+    auto* titleBar = new UIElement(context_);
+    titleBar->SetMinSize(0, 24);
+    titleBar->SetVerticalAlignment(VA_TOP);
+    titleBar->SetLayoutMode(LM_HORIZONTAL);
+
+    // Create the Window title Text
+    auto* windowTitle = new Text(context_);
+    windowTitle->SetName("WindowTitle");
+    windowTitle->SetText("Hello GUI!");
+    windowTitle->SetFontSize(40);
+
+    // Create the Window's close button
+    auto* buttonClose = new Button(context_);
+    buttonClose->SetName("CloseButton");
+
+    // Add the controls to the title bar
+    titleBar->AddChild(windowTitle);
+    titleBar->AddChild(buttonClose);
+
+    // Add the title bar to the Window
+    window_->AddChild(titleBar);
+
+    // Apply styles
+    window_->SetStyleAuto();
+    windowTitle->SetStyleAuto();
+    windowTitle->SetFontSize(20);
+    buttonClose->SetStyle("CloseButton");
+
+    // Subscribe to buttonClose release (following a 'press') events
+    SubscribeToEvent(buttonClose, E_RELEASED, URHO3D_HANDLER(Game, HandleClosePressed));
+
+    // Subscribe also to all UI mouse clicks just to see where we have clicked
+    SubscribeToEvent(E_UIMOUSECLICK, URHO3D_HANDLER(Game, HandleControlClicked));
+}
+
+void Game::CreateDraggableFish()
+{
+    auto* cache = GetSubsystem<ResourceCache>();
+    auto* graphics = GetSubsystem<Graphics>();
+
+    // Create a draggable Fish button
+    auto* draggableFish = new Button(context_);
+    draggableFish->SetTexture(cache->GetResource<Texture2D>("Textures/UrhoDecal.dds")); // Set texture
+    draggableFish->SetBlendMode(BLEND_ADD);
+    draggableFish->SetSize(128, 128);
+    draggableFish->SetPosition((graphics->GetWidth() - draggableFish->GetWidth()) / 2, 200);
+    draggableFish->SetName("Fish");
+    uiRoot_->AddChild(draggableFish);
+
+    // Add a tooltip to Fish button
+    auto* toolTip = new ToolTip(context_);
+    draggableFish->AddChild(toolTip);
+    toolTip->SetPosition(IntVector2(draggableFish->GetWidth() + 5, draggableFish->GetWidth() / 2)); // slightly offset from close button
+    auto* textHolder = new BorderImage(context_);
+    toolTip->AddChild(textHolder);
+    textHolder->SetStyle("ToolTipBorderImage");
+    auto* toolTipText = new Text(context_);
+    textHolder->AddChild(toolTipText);
+    toolTipText->SetStyle("ToolTipText");
+    toolTipText->SetText("Please drag me!");
+
+    // Subscribe draggableFish to Drag Events (in order to make it draggable)
+    // See "Event list" in documentation's Main Page for reference on available Events and their eventData
+    SubscribeToEvent(draggableFish, E_DRAGBEGIN, URHO3D_HANDLER(Game, HandleDragBegin));
+    SubscribeToEvent(draggableFish, E_DRAGMOVE, URHO3D_HANDLER(Game, HandleDragMove));
+    SubscribeToEvent(draggableFish, E_DRAGEND, URHO3D_HANDLER(Game, HandleDragEnd));
+}
+
+void Game::HandleDragBegin(StringHash eventType, VariantMap& eventData)
+{
+    // Get UIElement relative position where input (touch or click) occurred (top-left = IntVector2(0,0))
+    dragBeginPosition_ = IntVector2(eventData["ElementX"].GetInt(), eventData["ElementY"].GetInt());
+}
+
+void Game::HandleDragMove(StringHash eventType, VariantMap& eventData)
+{
+    IntVector2 dragCurrentPosition = IntVector2(eventData["X"].GetInt(), eventData["Y"].GetInt());
+    UIElement* draggedElement = static_cast<UIElement*>(eventData["Element"].GetPtr());
+    draggedElement->SetPosition(dragCurrentPosition - dragBeginPosition_);
+}
+
+void Game::HandleDragEnd(StringHash eventType, VariantMap& eventData) // For reference (not used here)
+{
+}
+
+void Game::HandleClosePressed(StringHash eventType, VariantMap& eventData)
+{
+//    if (GetPlatform() != "Web")
+        engine_->Exit();
+}
+
+void Game::HandleControlClicked(StringHash eventType, VariantMap& eventData)
+{
+    // Get the Text control acting as the Window's title
+    auto* windowTitle = window_->GetChildStaticCast<Text>("WindowTitle", true);
+
+    // Get control that was clicked
+    auto* clicked = static_cast<UIElement*>(eventData[UIMouseClick::P_ELEMENT].GetPtr());
+
+    String name = "...?";
+    if (clicked)
+    {
+        // Get the name of the control that was clicked
+        name = clicked->GetName();
+    }
+
+    // Update the Window's title text
+    windowTitle->SetText("Hello " + name + "!");
+}
+

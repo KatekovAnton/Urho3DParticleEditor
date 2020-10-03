@@ -49,6 +49,16 @@ public:
 
 private:
     
+    /// The Window.
+    SharedPtr<Window> window_;
+    /// The UI's root UIElement.
+    SharedPtr<UIElement> uiRoot_;
+    /// Remembered drag begin position.
+    IntVector2 dragBeginPosition_;
+    
+    
+    
+    void CreateGui();
     void CreateMap();
     void SubscribeToEvents();
     
@@ -56,6 +66,16 @@ private:
     void HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData);
     
     void initGraphicsMode();
+    
+    
+    void InitControls();
+    void InitWindow();
+    void CreateDraggableFish();
+    void HandleDragBegin(StringHash eventType, VariantMap& eventData);
+    void HandleDragMove(StringHash eventType, VariantMap& eventData);
+    void HandleDragEnd(StringHash eventType, VariantMap& eventData);
+    void HandleClosePressed(StringHash eventType, VariantMap& eventData);
+    void HandleControlClicked(StringHash eventType, VariantMap& eventData);
 
 };
 

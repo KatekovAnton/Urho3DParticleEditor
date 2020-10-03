@@ -53,6 +53,10 @@ namespace Urho3D
     class VertexBuffer;
     class IndexBuffer;
     class Texture2D;
+
+    class Window;
+    class UIElement;
+
 }
 
 
