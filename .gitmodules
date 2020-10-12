@@ -1,4 +1,4 @@
 [submodule "urho"]
 	path = urho
-	url = git@github.com:KatekovAnton/Urho3D.git
+url=https://github.com/urho3d/Urho3D.git
 	branch = feature/projectnbuild
