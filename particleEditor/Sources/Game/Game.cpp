@@ -128,7 +128,7 @@ void Game::CreateGui()
 
     // Load XML file containing default UI style sheet
     auto* cache = GetSubsystem<ResourceCache>();
-    auto* style = cache->GetResource<XMLFile>("_System/DefaultStyle.xml");
+    auto* style = cache->GetResource<XMLFile>("_System/UI/DefaultStyle.xml");
 
     uiRoot_ = GetSubsystem<UI>()->GetRoot();
     // Set the loaded style as default style
@@ -278,12 +278,12 @@ void Game::InitControls()
     // Create a Button
     auto* button = new Button(context_);
     button->SetName("Button");
-    button->SetMinHeight(24);
+    button->SetMinHeight(34);
 
     // Create a LineEdit
     auto* lineEdit = new LineEdit(context_);
     lineEdit->SetName("LineEdit");
-    lineEdit->SetMinHeight(24);
+    lineEdit->SetMinHeight(34);
 
     // Add controls to Window
     window_->AddChild(checkBox);
@@ -295,6 +295,8 @@ void Game::InitControls()
     checkBox->SetSize(30, 30);
     button->SetStyleAuto();
     lineEdit->SetStyleAuto();
+    
+    lineEdit->GetTextElement()->SetFontSize(20);
 }
 
 void Game::InitWindow()
@@ -307,6 +309,7 @@ void Game::InitWindow()
     window_->SetMinWidth(384);
     window_->SetLayout(LM_VERTICAL, 10, IntRect(10, 10, 10, 10));
     window_->SetAlignment(HA_CUSTOM, VA_CUSTOM);
+    window_->SetPosition(4, 4);
     
     window_->SetName("Window");
 
@@ -320,15 +323,15 @@ void Game::InitWindow()
     auto* windowTitle = new Text(context_);
     windowTitle->SetName("WindowTitle");
     windowTitle->SetText("Hello GUI!");
-    windowTitle->SetFontSize(40);
+    windowTitle->SetFontSize(20);
 
     // Create the Window's close button
-    auto* buttonClose = new Button(context_);
-    buttonClose->SetName("CloseButton");
+//    auto* buttonClose = new Button(context_);
+//    buttonClose->SetName("CloseButton");
 
     // Add the controls to the title bar
     titleBar->AddChild(windowTitle);
-    titleBar->AddChild(buttonClose);
+//    titleBar->AddChild(buttonClose);
 
     // Add the title bar to the Window
     window_->AddChild(titleBar);
@@ -337,10 +340,10 @@ void Game::InitWindow()
     window_->SetStyleAuto();
     windowTitle->SetStyleAuto();
     windowTitle->SetFontSize(20);
-    buttonClose->SetStyle("CloseButton");
+//    buttonClose->SetStyle("CloseButton");
 
-    // Subscribe to buttonClose release (following a 'press') events
-    SubscribeToEvent(buttonClose, E_RELEASED, URHO3D_HANDLER(Game, HandleClosePressed));
+//    // Subscribe to buttonClose release (following a 'press') events
+//    SubscribeToEvent(buttonClose, E_RELEASED, URHO3D_HANDLER(Game, HandleClosePressed));
 
     // Subscribe also to all UI mouse clicks just to see where we have clicked
     SubscribeToEvent(E_UIMOUSECLICK, URHO3D_HANDLER(Game, HandleControlClicked));
